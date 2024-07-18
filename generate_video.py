@@ -1,10 +1,6 @@
 import subprocess
 from textwrap import wrap
 
-# mamba create -n emsvideos python=3.12 ffmpeg -y
-# mamba activate emsvideos
-# python generate_video.py
-
 INTRO = "ems_intro.mp4"
 OUTRO = "ems_outro.mp4"
 
@@ -17,7 +13,6 @@ def generate_ffmpeg_script(
 
     title_start = 5
     title_fade = 2
-    author_start = 7
 
     drawtext_filters = []
     for i, line in enumerate(wrapped_title):
@@ -39,7 +34,7 @@ def generate_ffmpeg_script(
         y={400 + 120*len(wrapped_title)}:
         fontcolor=white:
         fontsize=36:
-        alpha='if(lt(t,{author_start}),0,if(lt(t,{author_start+title_fade}),(t-{author_start})/{title_fade},1))'
+        alpha='if(lt(t,{title_start}),0,if(lt(t,{title_start+title_fade}),(t-{title_start})/{title_fade},1))'
         """
     )
 
@@ -58,6 +53,9 @@ def generate_ffmpeg_script(
 
     # Combine intro, talk segment, and outro
     ffmpeg -f concat -safe 0 -i <(printf "file '$PWD/%s'\\n" "intro_with_text_and_audio.mp4" "talk_segment.mp4" "outro_with_audio.mp4") -c:v copy -c:a copy -y {output}
+
+    # Remove temporary files
+    rm intro_with_text.mp4 intro_with_text_and_audio.mp4 outro_with_audio.mp4 talk_segment.mp4
     """
 
     return ffmpeg_command
@@ -70,8 +68,8 @@ if __name__ == "__main__":
     author = "Peter Kalverla (Netherlands eScience Center)"
 
     recording = "sample_recording.mp4"
-    start = "00:00:14"
-    end = "00:00:19"
+    start = "00:00:40"
+    end = "00:00:50"
 
     output_file = "test.mp4"
 
