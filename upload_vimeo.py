@@ -28,5 +28,13 @@ client = vimeo.VimeoClient(
     secret=secrets["client_secret"],
 )
 
-response = client.get("/tutorial")
-print(response.json())
+file_name = "ems_intro.mp4"
+uri = client.upload(
+    file_name,
+    data={
+        "name": "Test upload via API",
+        "description": "Trying to upload the EMS intro using the vimeo API",
+    },
+)
+
+print(f"Your video URI is: {uri}")
